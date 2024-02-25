@@ -18,7 +18,8 @@ RUN chmod +x /usr/src/app/wait-for-postgres.sh
 COPY package*.json ./
 
 # Instale as dependências
-RUN npm install
+RUN npm install && npm install cors
+
 
 # Copie todo o código fonte da aplicação para o diretório de trabalho
 COPY . .
