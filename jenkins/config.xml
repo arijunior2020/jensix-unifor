@@ -1,0 +1,52 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<matrix-project>
+  <actions/>
+  <description>Pipeline CI/CD</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.workflow.job.WorkflowJob plugin="workflow-job@2.42">
+      <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.90">
+        <script>
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Instalação das dependências
+                sh 'npm install'
+                // Build da aplicação
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                // Execução dos testes
+                sh 'npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Implantação da aplicação
+                sh 'npm deploy'
+            }
+        }
+    }
+}
+
+        </script>
+        <sandbox>false</sandbox>
+      </definition>
+    </org.jenkinsci.plugins.workflow.job.WorkflowJob>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</matrix-project>
