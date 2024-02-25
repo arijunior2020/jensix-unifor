@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: jensix123
+      POSTGRES_DB: db-jensix
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && docker-entrypoint.sh postgres"]
+
+  app:
+    build: ./cad_pessoas
+    ports:
+      - "8585:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: jensix123
+      DATABASE_NAME: db-jensix
+    command: ["./wait-for-postgres.sh", "db", "5432", "npm", "start"]  # Adicionando o comando de espera
+
+volumes:
+  db_data:

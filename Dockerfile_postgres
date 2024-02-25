@@ -1,0 +1,8 @@
+FROM postgres:latest
+
+# Copia scripts SQL para serem executados na criação do banco de dados
+COPY ./scripts/ /docker-entrypoint-initdb.d/
+
+# Remove o conteúdo do diretório de dados do PostgreSQL
+RUN rm -rf /var/lib/postgresql/data/*
+
