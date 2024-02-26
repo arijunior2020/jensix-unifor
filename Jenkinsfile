@@ -17,20 +17,20 @@ pipeline {
         
         stage('Test Application') {
     steps {
-        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec -T app npm test"
+        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec app npm test"
     }
 }
         
-        stage('Push to Dev Branch') {
+        stage('Push to prod Branch') {
             steps {
                 script {
                     // Envie as alterações para a nova branch 'dev' no GitHub
                     sh 'git config --global user.email "arimateiajunior.tic@gmail.com"'
                     sh 'git config --global user.name "Arimateia Junior"'
-                    sh 'git checkout -b dev'
+                    sh 'git checkout -b prod'
                     sh 'git add .'
-                    sh 'git commit -m "Committing changes to dev branch"'
-                    sh 'git push origin dev'
+                    sh 'git commit -m "Committing changes to prod branch"'
+                    sh 'git push origin prod'
                 }
             }
         }
