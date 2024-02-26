@@ -21,22 +21,36 @@ pipeline {
             }
         }
         
-        stage('Ensure prod Branch Exists') {
+        stage('Clean up') {
     steps {
         script {
-            // Verifica se a branch 'prod' existe no repositório remoto usando a API do GitHub
-            def branchExists = sh(script: 'curl -s -o /dev/null -w "%{http_code}" https://api.github.com/repos/arijunior2020/jensix-unifor/branches/prod', returnStdout: true).trim()
-            if (branchExists == '200') {
-                // Se a branch existe no repositório remoto, faz checkout nela
-                sh 'git checkout prod'
-            } else {
-                // Se a branch não existe no repositório remoto, cria uma nova localmente e faz push para o repositório remoto
-                sh 'git checkout -b prod'
-                sh 'git push origin prod'
+            // Verifica se a branch 'prod' existe localmente
+            def branchExistsLocal = sh(script: 'git show-ref --verify --quiet refs/heads/prod', returnStatus: true)
+            if (branchExistsLocal == 0) {
+                // Se a branch 'prod' existir localmente, exclui-a
+                sh 'git branch -D prod'
             }
         }
     }
 }
+
+stage('Ensure prod Branch Exists') {
+    steps {
+        script {
+            // Verifica se a branch 'prod' existe no repositório remoto usando a API do GitHub
+            def branchExistsRemote = sh(script: 'curl -s -o /dev/null -w "%{http_code}" https://api.github.com/repos/arijunior2020/jensix-unifor/branches/prod', returnStdout: true).trim()
+            if (branchExistsRemote == '404') {
+                // Se a branch 'prod' não existe no repositório remoto, cria uma nova localmente e faz push para o repositório remoto
+                sh 'git checkout -b prod'
+                sh 'git push origin prod'
+            } else {
+                // Se a branch 'prod' existe no repositório remoto, faz checkout nela
+                sh 'git checkout prod'
+            }
+        }
+    }
+}
+
 
 
         
