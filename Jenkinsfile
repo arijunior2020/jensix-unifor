@@ -32,7 +32,8 @@ pipeline {
                 sh 'git push origin prod'
             } else {
                 // Se a branch já existe no repositório remoto, faz checkout nela
-                sh 'git checkout prod'
+                sh 'git checkout -b prod'
+                sh 'git push origin prod'
             }
         }
     }
