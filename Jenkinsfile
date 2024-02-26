@@ -17,7 +17,7 @@ pipeline {
         
         stage('Test Application') {
     steps {
-        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec app npm test"
+        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} run app npm test"
     }
 }
         
