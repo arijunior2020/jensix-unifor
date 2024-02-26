@@ -11,4 +11,11 @@
     "body-parser": "^1.19.0",
     "pg": "^8.7.1" 
   }
+  {
+    "devDependencies": {
+      "jest": "^27.2.0",
+      "supertest": "^6.1.6"
+    }
+  }
+  
 }
