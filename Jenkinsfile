@@ -16,10 +16,10 @@ pipeline {
         }
         
         stage('Test Application') {
-    steps {
-        sh 'echo "No tests to run"'
-    }
-}
+            steps {
+                sh 'echo "No tests to run"'
+            }
+        }
         
         stage('Ensure prod Branch Exists') {
             steps {
@@ -29,6 +29,8 @@ pipeline {
                     if (branchExists != 0) {
                         // Se a branch não existe, cria uma nova
                         sh 'git checkout -b prod'
+                        // E faz push da nova branch para o repositório remoto
+                        sh 'git push origin prod'
                     } else {
                         // Se a branch já existe, faz checkout nela
                         sh 'git checkout prod'
