@@ -24,20 +24,20 @@ pipeline {
         stage('Ensure prod Branch Exists') {
     steps {
         script {
-            // Verifica se a branch 'prod' existe no repositório remoto
-            def branchExists = sh(script: 'git ls-remote --exit-code --heads origin prod', returnStatus: true)
-            if (branchExists == 0) {
-                // Se a branch não existe no repositório remoto, cria uma nova localmente e faz push para o repositório remoto
-                sh 'git checkout -b prod'
-                sh 'git push origin prod'
+            // Verifica se a branch 'prod' existe no repositório remoto usando a API do GitHub
+            def branchExists = sh(script: 'curl -s -o /dev/null -w "%{http_code}" https://api.github.com/repos/arijunior2020/jensix-unifor/branches/prod', returnStdout: true).trim()
+            if (branchExists == '200') {
+                // Se a branch existe no repositório remoto, faz checkout nela
+                sh 'git checkout prod'
             } else {
-                // Se a branch já existe no repositório remoto, faz checkout nela
+                // Se a branch não existe no repositório remoto, cria uma nova localmente e faz push para o repositório remoto
                 sh 'git checkout -b prod'
                 sh 'git push origin prod'
             }
         }
     }
 }
+
 
         
         stage('Commit and Push to prod Branch') {
