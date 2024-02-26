@@ -22,22 +22,22 @@ pipeline {
         }
         
         stage('Ensure prod Branch Exists') {
-            steps {
-                script {
-                    // Verifica se a branch 'prod' já existe localmente
-                    def branchExists = sh(script: 'git show-ref --verify --quiet refs/heads/prod', returnStatus: true)
-                    if (branchExists != 0) {
-                        // Se a branch não existe localmente, cria uma nova
-                        sh 'git checkout -b prod'
-                        // E faz push da nova branch para o repositório remoto
-                        sh 'git push origin prod'
-                    } else {
-                        // Se a branch já existe, faz checkout nela
-                        sh 'git checkout prod'
-                    }
-                }
+    steps {
+        script {
+            // Verifica se a branch 'prod' existe no repositório remoto
+            def branchExists = sh(script: 'git ls-remote --exit-code --heads origin prod', returnStatus: true)
+            if (branchExists == 0) {
+                // Se a branch não existe no repositório remoto, cria uma nova localmente e faz push para o repositório remoto
+                sh 'git checkout -b prod'
+                sh 'git push origin prod'
+            } else {
+                // Se a branch já existe no repositório remoto, faz checkout nela
+                sh 'git checkout prod'
             }
         }
+    }
+}
+
         
         stage('Commit and Push to prod Branch') {
             steps {
