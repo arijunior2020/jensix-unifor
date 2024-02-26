@@ -16,14 +16,10 @@ pipeline {
         }
         
         stage('Test Application') {
-            steps {
-                // Execute testes da aplicação, se necessário
-                // Por exemplo:
-                sh "docker-compose -f ${DOCKER_COMPOSE_FILE} up -d"
-                sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec app npm test"
-                sh "docker-compose -f ${DOCKER_COMPOSE_FILE} down"
-            }
-        }
+    steps {
+        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec -T app npm test"
+    }
+}
         
         stage('Push to Dev Branch') {
             steps {
