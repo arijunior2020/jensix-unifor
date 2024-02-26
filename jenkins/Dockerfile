@@ -5,22 +5,22 @@ FROM jenkins/jenkins:lts
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
 
-# Copie o script install-plugins.sh para a localização esperada
-COPY install-plugins.sh /usr/local/bin/install-plugins.sh
-
 USER root
-RUN chmod +x /usr/local/bin/install-plugins.sh
+
+# Instalação do Docker
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
+    apt-get update && \
+    apt-get install -y docker-ce && \
+    usermod -aG docker jenkins
+
+# Instale o Docker Compose
+RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose
 
 USER jenkins
-
-# Copie plugins.txt para o contêiner
-COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-
-# Instale plugins usando o script de instalação de plugins do Jenkins
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
-
-# Copie configurações personalizadas do Jenkins para o contêiner
-COPY config.xml /var/jenkins_home/config.xml
 
 # Exponha a porta 8080
 EXPOSE 8080
