@@ -16,20 +16,32 @@ pipeline {
         }
         
         stage('Test Application') {
-    steps {
-        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} run app npm test"
-    }
-}
+            steps {
+                sh "docker-compose -f ${DOCKER_COMPOSE_FILE} run app npm test"
+            }
+        }
+        
+        stage('Ensure prod Branch Exists') {
+            steps {
+                script {
+                    // Verifica se a branch 'prod' já existe
+                    def branchExists = sh(script: 'git show-ref --verify --quiet refs/heads/prod', returnStatus: true)
+                    if (branchExists != 0) {
+                        // Se a branch não existe, cria uma nova
+                        sh 'git checkout -b prod'
+                    }
+                }
+            }
+        }
         
         stage('Push to prod Branch') {
             steps {
                 script {
-                    // Envie as alterações para a nova branch 'dev' no GitHub
-                    sh 'git config --global user.email "arimateiajunior.tic@gmail.com"'
-                    sh 'git config --global user.name "Arimateia Junior"'
-                    sh 'git checkout -b prod'
+                    // Adiciona todas as alterações ao commit
                     sh 'git add .'
+                    // Faz o commit das alterações
                     sh 'git commit -m "Committing changes to prod branch"'
+                    // Push para a branch 'prod' no repositório remoto
                     sh 'git push origin prod'
                 }
             }
