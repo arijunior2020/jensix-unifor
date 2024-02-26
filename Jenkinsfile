@@ -24,10 +24,10 @@ pipeline {
         stage('Ensure prod Branch Exists') {
             steps {
                 script {
-                    // Verifica se a branch 'prod' já existe
+                    // Verifica se a branch 'prod' já existe localmente
                     def branchExists = sh(script: 'git show-ref --verify --quiet refs/heads/prod', returnStatus: true)
                     if (branchExists != 0) {
-                        // Se a branch não existe, cria uma nova
+                        // Se a branch não existe localmente, cria uma nova
                         sh 'git checkout -b prod'
                         // E faz push da nova branch para o repositório remoto
                         sh 'git push origin prod'
